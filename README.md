@@ -33,7 +33,7 @@ in bulk without network access. An optional mode finds better layouts where they
   (macOS: `xcode-select --install`; Debian/Ubuntu: `sudo apt install build-essential`)
 - Windows: no compiler needed; a prebuilt solver is provided (see below)
 
-Tested on Linux, macOS and Windows with Python 3.9 and 3.12.
+Tested on Linux, macOS and Windows with Python 3.9, 3.12, 3.14 and 3.15.
 
 ## Installation
 
