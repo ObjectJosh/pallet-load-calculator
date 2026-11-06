@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pallet-load-calculator"
-version = "1.0.0"
+version = "1.1.0"
 description = "Offline uniform pallet load calculator reproducing onpallet.com results"
 readme = "README.md"
 requires-python = ">=3.9"

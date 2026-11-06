@@ -21,7 +21,7 @@ Usage:
 
 See README.md for the input format and docs/SPEC.md for the full specification.
 """
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import argparse
 import bisect
