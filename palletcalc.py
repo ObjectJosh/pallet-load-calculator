@@ -265,11 +265,14 @@ def _find_solver():
     env = os.environ.get("PALLETCALC_SOLVER")
     if env:
         return env
-    bundled = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                           "third_party", "RecursivePartitioningAlgorithm", "RecPartAlgorithm")
-    if os.path.exists(bundled):
-        return bundled
-    return shutil.which("RecPartAlgorithm") or bundled
+    exe = "RecPartAlgorithm.exe" if os.name == "nt" else "RecPartAlgorithm"
+    here = os.path.dirname(os.path.abspath(__file__))
+    for bundled in (os.path.join(here, "third_party", "RecursivePartitioningAlgorithm", exe),
+                    os.path.join(here, exe)):  # Windows: the release .exe placed next to palletcalc.py
+        if os.path.exists(bundled):
+            return bundled
+    return shutil.which("RecPartAlgorithm") or os.path.join(
+        here, "third_party", "RecursivePartitioningAlgorithm", exe)
 
 
 RECPART_BIN = _find_solver()
@@ -331,7 +334,7 @@ def calc_layer(box_w, box_l, pal_w, pal_l, mode="onpallet", allow_fallback=False
     site = recpart_layer(box_w, box_l, pal_w, pal_l, phase1_only=True)
     if site is None:
         if not allow_fallback:
-            why = ("not built: run `make` in third_party/RecursivePartitioningAlgorithm"
+            why = ("not found: build it (see README) or set PALLETCALC_SOLVER"
                    if not os.path.exists(RECPART_BIN) else "failed or timed out")
             raise SolverUnavailable(f"onpallet-exact solver {why} "
                                     "(or pass --allow-fallback for the ~97%-accurate Python solver)")
@@ -446,8 +449,9 @@ def main():
     if os.path.exists(a.output) and not a.force:
         sys.exit(f"error: {a.output} already exists (use -o another.csv or --force)")
     if not os.path.exists(RECPART_BIN) and not a.allow_fallback:
-        sys.exit("error: solver not found. Build it with `make -C third_party/RecursivePartitioningAlgorithm`, "
-                 "set PALLETCALC_SOLVER, or pass --allow-fallback.")
+        sys.exit("error: solver not found. Build it with `make` (macOS/Linux), place "
+                 "RecPartAlgorithm.exe next to palletcalc.py (Windows), set PALLETCALC_SOLVER, "
+                 "or pass --allow-fallback.")
     warned = 0
     with open(a.output, "w", newline="") as f:
         wr = csv.DictWriter(f, fieldnames=OUT_FIELDS, extrasaction="ignore")

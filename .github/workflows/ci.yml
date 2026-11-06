@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: ["**"]
   pull_request:
 
 jobs:
@@ -24,3 +24,35 @@ jobs:
         run: make test
       - name: Validation against recorded reference data
         run: make validate
+
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.9", "3.12"]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Build solver (MinGW g++, static)
+        shell: bash
+        working-directory: third_party/RecursivePartitioningAlgorithm
+        run: |
+          g++ --version
+          g++ -O3 -Wall -static RecPartAlgorithm.cpp bd.cpp draw.cpp draw_bd.cpp graphics.cpp \
+            sets.cpp util.cpp -o RecPartAlgorithm.exe
+      - name: Unit and regression tests
+        run: python -m unittest discover -s tests -v
+      - name: Validation against recorded reference data
+        run: |
+          python validation/end_to_end.py validation/data/learn_raw.jsonl validation/data/holdout_raw.jsonl
+          python validation/summary_check.py
+          python validation/targeted_check.py
+      - name: Upload solver executable
+        if: matrix.python == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: RecPartAlgorithm-windows-x64
+          path: third_party/RecursivePartitioningAlgorithm/RecPartAlgorithm.exe

@@ -45,9 +45,6 @@
 #include <math.h>
 #include <algorithm>
 
-#include <sys/times.h>
-#include <sys/resource.h>
-#include <sys/time.h>
 
 #include "bd.h"
 #include "sets.h"

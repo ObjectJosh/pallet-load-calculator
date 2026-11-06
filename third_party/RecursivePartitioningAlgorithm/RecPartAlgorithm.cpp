@@ -48,9 +48,9 @@
 #include <cstdlib>
 #include <map>
 
-#include <sys/resource.h>
-#include <sys/time.h>
-#include <sys/times.h>
+/* Local modification (2026): timing uses std::clock() instead of getrusage() so the
+ * program also builds on Windows. Only the reported runtime is affected. */
+#include <ctime>
 
 #include <iostream>
 
@@ -1139,7 +1139,7 @@ int main() {
   int BD_solution, L_solution;
   int INDEX;
   double BD_time, L_time;
-  struct rusage usage, prev_usage;
+  std::clock_t prev_usage;
   int L_n, W_n;
 
   /* Read L, W, l and w from standard input. */
@@ -1161,15 +1161,11 @@ int main() {
   memory_type = 5;
 
   /* Try to solve the problem with Algorithm 1. */
-  getrusage(RUSAGE_SELF, &prev_usage);
+  prev_usage = std::clock();
   BD_solution = solve_BD(L, W, l, w, 0);
-  getrusage(RUSAGE_SELF, &usage);
-
+  
   BD_time = 
-    (((double) usage.ru_utime.tv_sec + 
-      ((double) usage.ru_utime.tv_usec / 1e06)) -
-     ((double) prev_usage.ru_utime.tv_sec +
-      ((double) prev_usage.ru_utime.tv_usec / 1e06)));
+    ((double) (std::clock() - prev_usage) / CLOCKS_PER_SEC);
 
   printf("\nPhase 1 (Five-block Algorithm)\n");
   printf(" - solution found: %d box", BD_solution);
@@ -1196,7 +1192,7 @@ int main() {
      * optimal. Then it will try to solve the problem with
      * L-Algorithm. */
 
-    getrusage(RUSAGE_SELF, &prev_usage);
+    prev_usage = std::clock();
 
     makeIndices(L_n, W_n);
     allocateMemory();
@@ -1211,12 +1207,8 @@ int main() {
     draw(L, W, INDEX, q, L_solution & nRet, true);
     freeMemory();
 
-    getrusage(RUSAGE_SELF, &usage);
-
-    L_time = (((double) usage.ru_utime.tv_sec + 
-               ((double) usage.ru_utime.tv_usec / 1e06)) -
-              ((double) prev_usage.ru_utime.tv_sec +
-               ((double) prev_usage.ru_utime.tv_usec / 1e06)));
+    
+    L_time = ((double) (std::clock() - prev_usage) / CLOCKS_PER_SEC);
 
     printf("\nPhase 2 (L-Algorithm)\n");
     printf(" - solution found: %d box", L_solution);

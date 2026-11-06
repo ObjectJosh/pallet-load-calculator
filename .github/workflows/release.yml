@@ -1,0 +1,35 @@
+name: Release
+
+# Push a tag such as v1.1.0 to publish a release with a prebuilt Windows solver.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  windows-solver:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build solver (MinGW g++, static)
+        shell: bash
+        working-directory: third_party/RecursivePartitioningAlgorithm
+        run: |
+          g++ -O3 -Wall -static RecPartAlgorithm.cpp bd.cpp draw.cpp draw_bd.cpp graphics.cpp \
+            sets.cpp util.cpp -o RecPartAlgorithm.exe
+      - name: Test before publishing
+        run: python -m unittest discover -s tests
+      - name: Publish release with the executable
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || \
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes
+          gh release upload "$GITHUB_REF_NAME" \
+            third_party/RecursivePartitioningAlgorithm/RecPartAlgorithm.exe --clobber

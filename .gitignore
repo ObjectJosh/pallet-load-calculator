@@ -17,3 +17,5 @@ dist/
 results*.csv
 *.log
 .DS_Store
+third_party/RecursivePartitioningAlgorithm/RecPartAlgorithm.exe
+RecPartAlgorithm.exe
