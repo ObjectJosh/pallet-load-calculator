@@ -370,6 +370,12 @@ def calculate(width, length, height, weight, pallet, load_height, unit="mm", mod
         raise ValueError(f"unknown pallet '{pallet}'")
     layer = calc_layer(w, l, floor_mm(pw), floor_mm(pl), mode, allow_fallback)
     layers = floor_mm(lh / h) if h else 0
+    if unit == "in" and mode == "onpallet":
+        # R8a: onpallet divides the two inch values converted to mm in plain floating point,
+        # with no tolerance, so exact multiples can lose a layer (48 in / 8 in -> 5 layers).
+        # Reproduced here; --mode best keeps the exact count.
+        h_in, lh_in = (half_up(float(str(v).strip().replace(",", ".")), 1) for v in (height, load_height))
+        layers = math.floor((lh_in * 25.4) / (h_in * 25.4))
     stack_h = layers * h
     pal_h = PALLET_HEIGHT_MM["custom" if p.startswith("custom:") else p]
     total = layer["count"] * layers

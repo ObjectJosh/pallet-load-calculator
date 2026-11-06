@@ -14,6 +14,7 @@ test: solver
 validate: solver
 	$(PYTHON) validation/end_to_end.py validation/data/learn_raw.jsonl validation/data/holdout_raw.jsonl
 	$(PYTHON) validation/summary_check.py
+	$(PYTHON) validation/targeted_check.py
 
 check: test validate
 

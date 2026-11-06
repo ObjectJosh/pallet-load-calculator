@@ -1,6 +1,6 @@
 """Tests for palletcalc. Run: python3 -m unittest discover -s tests -v
 
-Rule numbers (R1-R9) and formulas refer to docs/SPEC.md. Everything runs offline; tests that
+Rule numbers (R1-R10) and formulas refer to docs/SPEC.md. Everything runs offline; tests that
 need the compiled solver are skipped (with a reason) if it has not been built.
 """
 import csv
@@ -98,6 +98,18 @@ class InputRules(unittest.TestCase):
         r = pc.calculate(300, 400, 1600, 1, "euro", 1500, allow_fallback=True)
         self.assertEqual(r["layers"], 0)
 
+    def test_r10_weight_not_clamped_and_layout_independent(self):
+        # The site caps inch-mode weight at 51.2 lb (a bug); we keep the real weight.
+        light = pc.calculate(12, 16, 10, 22, "us", 60, "in", allow_fallback=True)
+        heavy = pc.calculate(12, 16, 10, 60, "us", 60, "in", allow_fallback=True)
+        self.assertEqual(key(light["layout"]), key(heavy["layout"]))
+        self.assertEqual(heavy["total_weight"], heavy["total_boxes"] * 60)
+        r = pc.calculate(300, 400, 250, 5000, "euro", 1500, allow_fallback=True)
+        self.assertEqual(r["total_weight"], r["total_boxes"] * 5000)
+        self.assertEqual(pc.calculate(300, 400, 250, 0, "euro", 1500, allow_fallback=True)["total_weight"], 0)
+        with self.assertRaises(ValueError):
+            pc.calculate(300, 400, 250, -1, "euro", 1500, allow_fallback=True)
+
     def test_r9_pallet_heights(self):
         for pal, ph in (("euro", 145), ("industrial", 145), ("us", 142), ("half", 158), ("australian", 151)):
             r = pc.calculate(200, 200, 200, 1, pal, 1000, allow_fallback=True)
@@ -174,6 +186,27 @@ class RecordedSiteRegression(unittest.TestCase):
                     self.assertEqual(key(r["layout"]), key(p["boxes"]))
                 n += 1
         self.assertEqual(n, 203)
+
+    def test_targeted_cases(self):
+        """88 cases aimed at inch mode, ties, phase-1 gaps and edges (validation/targeted_check.py)."""
+        import targeted_check
+        n = 0
+        with open(os.path.join(DATA, "targeted_raw.jsonl")) as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                rec = json.loads(line)
+                status, msg = targeted_check.check(rec)
+                with self.subTest(case=rec["case"]["id"]):
+                    self.assertNotEqual(status, "MISMATCH", msg)
+                n += 1
+        self.assertEqual(n, 88)
+
+    def test_r8a_inch_layer_floating_point(self):
+        # The site loses a layer on exact inch multiples; best mode keeps the exact count.
+        self.assertEqual(pc.calculate(12, 16, 8, 1, "us", 48, "in")["layers"], 5)
+        self.assertEqual(pc.calculate(12, 16, 8, 1, "us", 48, "in", mode="best")["layers"], 6)
+        self.assertEqual(pc.calculate(12, 16, 10, 1, "us", 60, "in")["layers"], 6)
 
 
 class Fallback(unittest.TestCase):

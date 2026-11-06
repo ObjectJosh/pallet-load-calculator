@@ -15,7 +15,7 @@ in bulk without network access. An optional mode finds better layouts where they
 ## Features
 
 - Batch processing from CSV, or single calculations from the command line.
-- Layer layouts identical, box for box, to onpallet.com on all 203 validation cases,
+- Layer layouts identical, box for box, to onpallet.com on all 290 validation cases,
   including a held-out set.
 - Full load summary: boxes per layer, layers, total boxes, total weight, stack height,
   height including pallet, surface and volume utilization.
@@ -109,7 +109,7 @@ Each input row is copied to the output, with these columns appended:
 | column | description |
 |---|---|
 | `boxes_per_layer`, `layers`, `total_boxes` | load composition |
-| `total_weight` | `total_boxes * weight`; pallet weight is not included |
+| `total_weight` | `total_boxes * weight`; pallet weight is not included. Weight is never clamped (onpallet.com caps it, see the spec, R10) |
 | `pallet_w_mm`, `pallet_l_mm` | pallet dimensions used |
 | `layer_area_used_pct` | share of the pallet surface covered by one layer |
 | `volume_used_pct` | share of the available load volume used |
@@ -122,15 +122,16 @@ Each input row is copied to the output, with these columns appended:
 
 ## Accuracy
 
-The calculator was validated against onpallet.com responses for 210 generated cases. Of
-these, 203 were answered by the site; the other 7 returned server errors.
+The calculator was validated against onpallet.com responses for 298 generated cases, 88 of
+them designed to target inch mode, orientation ties and edge cases. The site answered 290;
+the other 8 returned server errors.
 
 | check | result |
 |---|---|
-| layer layouts, box for box | 203 / 203 identical |
-| end to end from raw inputs (pallet size, layers, layout) | 203 / 203 |
-| results-page figures (12 pages across all pallet types and units) | 12 / 12 |
-| `--mode best` | 2 cases improved by one box, none worse |
+| layer layouts, box for box | 290 / 290 identical |
+| end to end from raw inputs (pallet size, layers, layout) | 290 / 290 |
+| results-page figures (43 pages across all pallet types and units) | 43 / 43 |
+| `--mode best` | 12 cases improved by one box, none worse |
 
 The methodology, the derived rules and the evidence for each are documented in
 [`docs/SPEC.md`](docs/SPEC.md).

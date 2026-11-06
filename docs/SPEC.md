@@ -7,7 +7,7 @@ This project is not affiliated with onpallet.com or Lorenz Pan AG. All observati
 were made through the site's public web interface.
 
 **Status (2026-11-06):** identical to the reference on every comparable case tested
-(203 layouts box for box, 12 results pages figure for figure).
+(290 layouts box for box, 43 results pages figure for figure).
 
 ---
 
@@ -57,12 +57,15 @@ Each rule lists its evidence. "Learn" and "holdout" refer to the datasets in sec
 | R1 | **mm input is rounded to whole mm, half up** (JavaScript `Math.round`). The page does this when you leave a field, which always happens before *Calculate*. | `onpallet.js` `checkInputValues` (`fac == 1` branch). Summary page S11 (300.4 / 399.6 / 1500.5 mm). |
 | R2 | **inch input is rounded to 0.1 in, half up**, by the same handler. | `onpallet.js`; the browser turned 9.25 -> 9.3 and 7.35 -> 7.4 (S10). |
 | R3 | **inches are converted as `x * 25.4` mm.** Box **width and length are then rounded down to whole mm** for the layout. Box **height, load height and custom pallet sides stay exact** (fractional mm). | 12 in -> 304 mm box (`pal.php`). S10: box face 236 x 345 mm, while `height` = 187.96 and `palW` = 1117.6 in the site's own layout data. |
-| R4 | **Input limits** (the site silently clamps outside them): box sides 70 to 1300 mm, box height 70 to 2400, load height 300 to 2600, custom pallet sides 200 to 1300, weight 0.1 to 1300. **The calculator reports an error instead of clamping**, because silent changes would defeat data validation. | `onpallet.js` `loadformfields`. |
+| R4 | **Input limits** (the site silently clamps outside them): box sides 70 to 1300 mm, box height 70 to 2400, load height 300 to 2600, custom pallet sides 200 to 1300. **The calculator reports an error instead of clamping**, because silent changes would defeat data validation. Weight is handled separately (R10). | `onpallet.js` `loadformfields`. |
 | R5 | **Standard pallets** (`palW x palL`, mm): euro 1200 x 800, industrial 1200 x 1000, US 1219 x 1016, half 800 x 600, australian 1165 x 1165. | `palW`/`palL` in `pal.php` responses. |
 | R6 | **Custom pallets always use the longer side as `palW`**, whatever the typed order. | Holdout H045, H046, H047, H051, H052, H055, H057, H058 (typed short side first, the site swapped). |
+| R6a | **In inch mode, the site labels a custom pallet's sides as `palW` = second typed side, `palL` = first typed side**, without sorting. The layout still uses the long side first (R7), so only the labels differ, and the results page shows the pallet as typed. The calculator keeps long-side-first labels so its output stays consistent with the layout. | Targeted I07, I11, I20, I21 (typed long side first, labels swapped); I06, I08, I10, I15 (typed short side first, agree by coincidence). |
 | R7 | **The solver receives the pallet as (long, short) and the box as (width, length) in typed order, not sorted.** Box order only matters for ties: when both orientations give the same count, the first dimension runs along the pallet's long side. | Learn set, phase 1: typed (w, l) gives 144/144 identical layouts; (l, w) gives 113/144; sorted gives 135/144 (the 9 misses are all ties). |
-| R8 | **`layers = floor(H / h)`**, using exact values (R3). | All 12 results pages; holdout varies `h` and `H`. |
+| R8 | **`layers = floor(H / h)`**, using exact values (R3). | All 29 results pages; holdout varies `h` and `H`. |
+| R8a | **In inch mode, the site computes layers as `floor((H_in * 25.4) / (h_in * 25.4))` in plain double-precision floating point, with no tolerance.** When the load height is an exact multiple of the box height, rounding error can drop a layer (48 in / 8 in gives 5.999999999999999, so 5 layers). The default mode reproduces this; `--mode best` uses the exact count. | Targeted Y08 (8 / 48 in: 5 layers), Y09, Y11, Y12; Y10 (10 / 60 in) and mm multiples are unaffected. |
 | R9 | **Pallet heights** added for "loading height with pallet": euro 145, industrial 145, US 142, half 158, australian 151, custom 145 mm. | Difference between the two height rows on the results pages, one per pallet type. |
+| R10 | **Weight** only affects `total_weight`, never the layout. The page rounds it to 0.1 and clamps it to at most 1300 in mm/kg mode. Its configured minimum of 0.1 rounds to 0 in practice. In inch/lb mode the page converts the 1300 limit as if weight were a length and caps weight at **51.2 lb** (1300 / 25.4), which is a site bug. The calculator accepts any non-negative weight and does not clamp. | Browser test on the page: 5000 kg -> 1300, 0 -> 0, 0.05 -> 0.1; in inch mode 60 lb and 5000 lb -> 51.2. |
 
 ---
 
@@ -109,7 +112,7 @@ When phase 1 cannot prove optimality, the authors' program goes on to the
 **L-approach**. It recursively divides the pallet into rectangles *and L-shaped pieces*,
 which reaches staircase-like patterns that five-block cuts cannot. onpallet does not run
 it, so the calculator only uses it in `--mode best` and for the `best_possible_per_layer`
-column. In testing it found one extra box on 2 of 203 cases. Both results are proven
+column. In testing it found one extra box on 12 of 290 cases; the site returned the phase-1 count in every one of them. Both results are proven
 optimal and checked for overlaps.
 
 Local change: the environment variable `RECPART_PHASE1_ONLY=1` makes the program stop
@@ -144,7 +147,7 @@ dropping a trailing `.0` (onpallet shows `86%`, not `86.0%`).
 | output | formula | site label |
 |---|---|---|
 | `boxes_per_layer` | `n_layer` (number of rectangles returned) | (results counter) |
-| `layers` | `floor(H / h)` | n layers |
+| `layers` | `floor(H / h)`; in inch mode computed as in R8a | n layers |
 | `total_boxes` | `n_layer * layers` | n packages |
 | `total_weight` | `total * m` (pallet weight not included) | Total weight |
 | `stack_height_mm` | `layers * h` (not the entered load height) | Loading height |
@@ -156,7 +159,18 @@ For inch rows the site displays heights in inches: the mm value / 25.4, rounded 
 The calculator adds `stack_height_in` and `height_with_pallet_in` for that. Note on
 `boxcount`: the site's layout data carries `boxcount = n_layer + 1` on every response.
 The page displays `boxcount - 1`, and the results page's *n packages* equals
-`n_layer * layers`. So `n_layer` is the number of rectangles, confirmed on all 12 pages.
+`n_layer * layers`. So `n_layer` is the number of rectangles, confirmed on all 29 pages.
+
+**Display formatting** (observed on all 29 recorded pages; the calculator outputs numbers,
+these rules matter only when comparing with the site):
+
+- Numbers: rounded to 1 decimal, trailing `.0` dropped, no thousands separator.
+- Package size: width x length x height in typed order, as the browser sent them, followed
+  by ` mm` or ` in` (for example `333 x 222 x 150 mm`).
+- Pallet size, standard pallets: short side first; mm glued to the unit (`800 x 1200mm`);
+  inches converted from mm to 0.1 (`31.5 x 47.2 in`).
+- Pallet size, custom pallets: typed order (not the layout's long-side-first order), as sent
+  (`1300 x 1000mm`, `47.5 x 42.5 in`).
 
 ---
 
@@ -202,16 +216,17 @@ tooling uses it; the calculator itself never contacts the site.
 |---|---|---|---|
 | learn | 150 | 90 random realistic boxes (100 to 600 mm) on all standard pallets; 20 small boxes (70 to 160); 15 custom pallets; 12 exact-fit / oversize / square edge cases; 6 layer-count edge cases; 7 classic hard MPLP instances, scaled | 144 (6 errors) |
 | holdout | 60 | new random seed, never used for rule discovery; varied `h` and `H`; 15 custom pallets (several typed short side first) | 59 (1 error) |
-| summary pages | 12 | every pallet type, inches, decimal inches, decimal mm, custom typed short side first, box taller than load height; inputs pre-rounded exactly like the browser | 12 |
+| summary pages | 29 | every pallet type in mm and inches; decimal inches and mm; custom pallets in both units and both typed orders; weight clamps and rounding; box counts from 2 to 8806; load height equal to, a multiple of, and below box height; inputs pre-rounded and clamped exactly like the browser | 29 |
+| targeted | 88 | designed for thin spots: 21 inch-mode layouts, 20 orientation ties, 10 new phase-1 gap instances (found by an offline scan of about 28,000 instances), 24 edge sizes, 13 layer edges; 14 also record the results page | 87 (1 error: `-6`) |
 
 ### 6.2 Results
 
 | check | result |
 |---|---|
-| Layouts identical box for box (learn + holdout) | **203 / 203** |
-| End to end from typed inputs (pallet dims, layers, layout) | **203 / 203** |
-| Results-page figures (n packages, layers, heights, surface %, volume %, weight) | **12 / 12** |
-| `--mode best` vs site | 201 equal, **2 better by one box** (57 vs 56, 69 vs 68), 0 worse |
+| Layouts identical box for box (learn + holdout + targeted) | **290 / 290** |
+| End to end from typed inputs (pallet dims, layers, layout) | **290 / 290** (4 differ only in the inch custom pallet labels, R6a) |
+| Results-page figures (n packages, layers, heights, surface %, volume %, weight, package and pallet size text) | **29 / 29** (3 differ only in total weight, by design, R10) |
+| `--mode best` vs site | 278 equal, **12 better by one box**, 0 worse (layer counts compared separately: best mode does not reproduce R8a) |
 | Pure-Python fallback, counts | 140 / 144 (4 cases one box short) |
 
 ### 6.3 How the algorithm was identified
@@ -229,13 +244,15 @@ tooling uses it; the calculator itself never contacts the site.
    resolved by R7 (typed box order): 144/144.
 6. The holdout set then exposed R6 (custom pallet orientation), and the results pages
    exposed R3's exact-height detail for inches.
+7. A targeted set of 88 cases exposed two inch-mode quirks of the site: the floating-point
+   layer count (R8a) and the swapped custom pallet labels (R6a).
 
 ### 6.4 Re-running
 
 All checks run offline against the recorded data:
 
 ```bash
-make test       # unit tests, golden cases, regression over all 203 recorded layouts
+make test       # unit tests, golden cases, regression over all 290 recorded layouts
 make validate   # end-to-end check and results-page figures
 MODE=best python3 validation/compare.py validation/data/learn_raw.jsonl validation/data/holdout_raw.jsonl
 ```
@@ -265,6 +282,11 @@ python3 validation/end_to_end.py /tmp/recheck.jsonl
 - Out-of-range inputs raise errors instead of being clamped (R4).
 - Inputs the site rejects with `-7` are answered.
 - Boxes that don't fit report `status = does_not_fit` instead of the site's error page.
+- Weight is not clamped (R10). For inch rows heavier than 51.2 lb, and mm rows heavier than
+  1300 kg, the calculator's `total_weight` uses the real weight; the site's total weight
+  is understated. Box counts and layouts are unaffected.
+
+- Custom pallet labels in inch mode stay long side first (R6a); the site swaps them.
 
 **Not modelled** (the site doesn't either)
 
