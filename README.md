@@ -29,12 +29,38 @@ in bulk without network access. An optional mode finds better layouts where they
 ## Requirements
 
 - Python 3.9 or later (standard library only)
-- A C++ compiler and `make`, to build the bundled solver
-  - macOS: `xcode-select --install`
-  - Debian/Ubuntu: `sudo apt install build-essential`
-  - Windows: build under WSL; the solver uses POSIX headers and does not build with MSVC.
+- macOS and Linux: a C++ compiler and `make` to build the bundled solver
+  (macOS: `xcode-select --install`; Debian/Ubuntu: `sudo apt install build-essential`)
+- Windows: no compiler needed; a prebuilt solver is provided (see below)
+
+Tested on Linux, macOS and Windows with Python 3.9 and 3.12.
 
 ## Installation
+
+### Windows
+
+1. Install Python from [python.org](https://www.python.org/downloads/). During setup, tick
+   "Add python.exe to PATH".
+2. Download this repository: **Code > Download ZIP** on GitHub, then extract it.
+3. Download `RecPartAlgorithm.exe` from the
+   [latest release](../../releases/latest) and place it in the extracted folder, next to
+   `palletcalc.py`.
+4. Open Command Prompt or PowerShell in that folder and check the installation:
+
+   ```bat
+   py palletcalc.py --one 300 400 250 10 euro 1500
+   ```
+
+On Windows, use `py` wherever the examples below use `python3`.
+
+To build the solver yourself instead, use MinGW-w64 g++ (MSVC is not supported):
+
+```bat
+cd third_party\RecursivePartitioningAlgorithm
+g++ -O3 -static RecPartAlgorithm.cpp bd.cpp draw.cpp draw_bd.cpp graphics.cpp sets.cpp util.cpp -o RecPartAlgorithm.exe
+```
+
+### macOS and Linux
 
 ```bash
 git clone <repository-url> pallet-load-calculator
@@ -50,8 +76,9 @@ pip install .
 export PALLETCALC_SOLVER="$PWD/third_party/RecursivePartitioningAlgorithm/RecPartAlgorithm"
 ```
 
-The solver is located through `PALLETCALC_SOLVER`, then the bundled build, then
-`RecPartAlgorithm` on `PATH`. The examples below assume you run from the repository; with the
+The solver is located through `PALLETCALC_SOLVER`, then the bundled build
+(`third_party/RecursivePartitioningAlgorithm/`), then `RecPartAlgorithm.exe` next to
+`palletcalc.py`, then `RecPartAlgorithm` on `PATH`. The examples below assume you run from the repository; with the
 installed command, use `palletcalc` in place of `python3 palletcalc.py`.
 
 ## Usage
@@ -189,8 +216,8 @@ third_party/RecursivePartitioningAlgorithm/
 Layer layouts come from the Recursive Partitioning Algorithm of Birgin, Lobato and
 Morabito (2010). onpallet.com's results match phase 1 of that algorithm, the recursive
 five-block heuristic. `--mode best` also runs phase 2, the L-approach. The authors'
-reference implementation is bundled with one marked modification: an environment switch
-that stops after phase 1. See [`docs/SPEC.md`](docs/SPEC.md) for the formal description.
+reference implementation is bundled with two marked modifications: an environment switch
+that stops after phase 1, and portable timing so it builds on Windows. See [`docs/SPEC.md`](docs/SPEC.md) for the formal description.
 
 ## Acknowledgements
 

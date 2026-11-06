@@ -115,9 +115,13 @@ it, so the calculator only uses it in `--mode best` and for the `best_possible_p
 column. In testing it found one extra box on 12 of 290 cases; the site returned the phase-1 count in every one of them. Both results are proven
 optimal and checked for overlaps.
 
-Local change: the environment variable `RECPART_PHASE1_ONLY=1` makes the program stop
-after phase 1 and output the phase-1 layout. This is marked in `RecPartAlgorithm.cpp`
-as required by GPLv3.
+Local changes, marked in the source as required by GPLv3:
+
+- The environment variable `RECPART_PHASE1_ONLY=1` makes the program stop after phase 1
+  and output the phase-1 layout (`RecPartAlgorithm.cpp`).
+- Runtime is measured with `std::clock()` instead of the POSIX `getrusage()`, so the
+  program builds on Windows (`RecPartAlgorithm.cpp`, `bd.cpp`). Only the printed runtime
+  is affected.
 
 ### 3.3 Pure-Python fallback (`--allow-fallback`)
 
