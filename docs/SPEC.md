@@ -277,16 +277,25 @@ python3 validation/end_to_end.py /tmp/recheck.jsonl
 
 ## 7. Known differences and open questions
 
-**Intentional differences**
+**Differences from the site**
 
-- Out-of-range inputs raise errors instead of being clamped (R4).
-- Inputs the site rejects with `-7` are answered.
-- Boxes that don't fit report `status = does_not_fit` instead of the site's error page.
-- Weight is not clamped (R10). For inch rows heavier than 51.2 lb, and mm rows heavier than
-  1300 kg, the calculator's `total_weight` uses the real weight; the site's total weight
-  is understated. Box counts and layouts are unaffected.
+The default mode (`onpallet`) reproduces the site's results, including its known errors,
+so that data produced with the site can be checked against it. `--mode best` corrects
+the errors that affect results. In every case below the site's behaviour is the
+incorrect one.
 
-- Custom pallet labels in inch mode stay long side first (R6a); the site swaps them.
+| topic | site | `onpallet` mode | `best` mode | rule |
+|---|---|---|---|---|
+| Layer count in inch mode | can lose a layer when the load height is an exact multiple of the box height (floating-point error) | reproduces the site | exact count | R8a |
+| Boxes per layer | five-block algorithm only; one box short on some hard instances (12 of 290 tested) | reproduces the site | adds the L-approach; never fewer boxes than the site | section 3 |
+| Weight | rounded to 0.1 and clamped to 1300 kg, or to 51.2 lb in inch mode (unit conversion error), which understates total weight | real weight, not clamped | real weight, not clamped | R10 |
+| Custom pallet labels in inch mode | width and length labels swapped relative to the layout | long side first, consistent with the layout | same | R6a |
+| Out-of-range inputs | silently clamped | reported as errors | reported as errors | R4 |
+| Box larger than the pallet | error page (`-6`) or an empty result | `status = does_not_fit` | same | section 5 |
+| Dense layouts the site gives up on (`-7`) | error page | answered | answered | section 5 |
+
+Box layouts, box counts in the default mode and all other results-page figures are
+identical to the site on every case tested (section 6).
 
 **Not modelled** (the site doesn't either)
 
@@ -302,7 +311,7 @@ python3 validation/end_to_end.py /tmp/recheck.jsonl
 - **Decimals sent without the browser's rounding:** if a request skips the browser (pasted
   decimals sent directly), the server appears to floor box sides but use the raw load
   height in the volume figure. Real browser use always rounds first (R1/R2), so the
-  replica follows the browser.
+  calculator follows the browser.
 - **Logged-in users:** the extra alternative layouts they get are not reproduced.
 - **Site changes:** if onpallet changes its algorithm or parameters, re-run section 6.4.
 

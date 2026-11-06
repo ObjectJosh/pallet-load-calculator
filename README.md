@@ -78,7 +78,7 @@ python3 palletcalc.py --one 300 400 250 10 euro 1500
 | `-o`, `--output FILE` | output CSV (default `results.csv`) |
 | `--force` | overwrite an existing output file |
 | `--mode onpallet` | reproduce onpallet.com exactly (default) |
-| `--mode best` | return the best layout found; may exceed onpallet.com by one box on hard instances |
+| `--mode best` | correct results: best layout found (sometimes one box more than onpallet.com) and exact layer counts (see [Differences](#differences-from-onpalletcom)) |
 | `--unit mm\|in` | unit for `--one` (default `mm`) |
 | `--allow-fallback` | if the C++ solver is unavailable, use the pure-Python solver (not site-exact) |
 | `--version` | print the version |
@@ -135,6 +135,22 @@ the other 8 returned server errors.
 
 The methodology, the derived rules and the evidence for each are documented in
 [`docs/SPEC.md`](docs/SPEC.md).
+
+## Differences from onpallet.com
+
+onpallet.com has a few errors. The default mode reproduces them, so results agree with
+the site; `--mode best` corrects those that affect the result. Use the default mode to
+check data produced with the site, and `--mode best` for correct figures.
+
+| topic | onpallet.com | default mode | `--mode best` |
+|---|---|---|---|
+| Layers, inch input | can drop a layer when the load height is an exact multiple of the box height (rounding error) | same as site | exact |
+| Boxes per layer | one box short on some hard cases | same as site | best found, never fewer |
+| Weight | clamped to 1300 kg, or 51.2 lb in inch mode (understates total weight) | real weight | real weight |
+| Out-of-range input | silently changed | reported as an error | reported as an error |
+
+Details, evidence and minor differences are in
+[`docs/SPEC.md`, section 7](docs/SPEC.md#7-known-differences-and-open-questions).
 
 ## Limitations
 
