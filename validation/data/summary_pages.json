@@ -1,0 +1,266 @@
+{
+ "S01": {
+  "input": {
+   "width": "230",
+   "length": "370",
+   "height": "180",
+   "weight": "4.5",
+   "pallet": "euro",
+   "load_height": "1600",
+   "unit": "mm"
+  },
+  "site": {
+   "Package size:": "230 x 370 x 180 mm",
+   "n packages:": "80",
+   "Pallet size:": "800 x 1200mm",
+   "Loading height:": "1440 mm",
+   "Loading height with pallet:": "1585 mm",
+   "n layers:": "8",
+   "Surface usage:": "88.6%",
+   "Volume usage:": "79.8%",
+   "Total weight:": "360"
+  }
+ },
+ "S02": {
+  "input": {
+   "width": "300",
+   "length": "400",
+   "height": "250",
+   "weight": "10",
+   "pallet": "industrial",
+   "load_height": "1500",
+   "unit": "mm"
+  },
+  "site": {
+   "Package size:": "300 x 400 x 250 mm",
+   "n packages:": "60",
+   "Pallet size:": "1000 x 1200mm",
+   "Loading height:": "1500 mm",
+   "Loading height with pallet:": "1645 mm",
+   "n layers:": "6",
+   "Surface usage:": "100%",
+   "Volume usage:": "100%",
+   "Total weight:": "600"
+  }
+ },
+ "S03": {
+  "input": {
+   "width": "305",
+   "length": "406",
+   "height": "254",
+   "weight": "12.3",
+   "pallet": "us",
+   "load_height": "1524",
+   "unit": "mm"
+  },
+  "site": {
+   "Package size:": "305 x 406 x 254 mm",
+   "n packages:": "54",
+   "Pallet size:": "1016 x 1219mm",
+   "Loading height:": "1524 mm",
+   "Loading height with pallet:": "1666 mm",
+   "n layers:": "6",
+   "Surface usage:": "90%",
+   "Volume usage:": "90%",
+   "Total weight:": "664.2"
+  }
+ },
+ "S04": {
+  "input": {
+   "width": "180",
+   "length": "250",
+   "height": "333",
+   "weight": "2.75",
+   "pallet": "half",
+   "load_height": "1800",
+   "unit": "mm"
+  },
+  "site": {
+   "Package size:": "180 x 250 x 333 mm",
+   "n packages:": "45",
+   "Pallet size:": "600 x 800mm",
+   "Loading height:": "1665 mm",
+   "Loading height with pallet:": "1823 mm",
+   "n layers:": "5",
+   "Surface usage:": "84.4%",
+   "Volume usage:": "78%",
+   "Total weight:": "123.75"
+  }
+ },
+ "S05": {
+  "input": {
+   "width": "275",
+   "length": "390",
+   "height": "210",
+   "weight": "7",
+   "pallet": "australian",
+   "load_height": "2000",
+   "unit": "mm"
+  },
+  "site": {
+   "Package size:": "275 x 390 x 210 mm",
+   "n packages:": "90",
+   "Pallet size:": "1165 x 1165mm",
+   "Loading height:": "1890 mm",
+   "Loading height with pallet:": "2041 mm",
+   "n layers:": "9",
+   "Surface usage:": "79%",
+   "Volume usage:": "74.7%",
+   "Total weight:": "630"
+  }
+ },
+ "S06": {
+  "input": {
+   "width": "250",
+   "length": "300",
+   "height": "220",
+   "weight": "3",
+   "pallet": "custom:700x1100",
+   "load_height": "1450",
+   "unit": "mm"
+  },
+  "site": {
+   "Package size:": "250 x 300 x 220 mm",
+   "n packages:": "48",
+   "Pallet size:": "700 x 1100mm",
+   "Loading height:": "1320 mm",
+   "Loading height with pallet:": "1465 mm",
+   "n layers:": "6",
+   "Surface usage:": "77.9%",
+   "Volume usage:": "70.9%",
+   "Total weight:": "144"
+  }
+ },
+ "S07": {
+  "input": {
+   "width": "95",
+   "length": "114",
+   "height": "120",
+   "weight": "0.8",
+   "pallet": "euro",
+   "load_height": "1000",
+   "unit": "mm"
+  },
+  "site": {
+   "Package size:": "95 x 114 x 120 mm",
+   "n packages:": "704",
+   "Pallet size:": "800 x 1200mm",
+   "Loading height:": "960 mm",
+   "Loading height with pallet:": "1105 mm",
+   "n layers:": "8",
+   "Surface usage:": "99.3%",
+   "Volume usage:": "95.3%",
+   "Total weight:": "563.2"
+  }
+ },
+ "S08": {
+  "input": {
+   "width": "12",
+   "length": "16",
+   "height": "10",
+   "weight": "22",
+   "pallet": "us",
+   "load_height": "60",
+   "unit": "in"
+  },
+  "site": {
+   "Package size:": "12 x 16 x 10 in",
+   "n packages:": "60",
+   "Pallet size:": "40 x 48 in",
+   "Loading height:": "60 in",
+   "Loading height with pallet:": "65.6 in",
+   "n layers:": "6",
+   "Surface usage:": "99.7%",
+   "Volume usage:": "99.7%",
+   "Total weight:": "1320"
+  }
+ },
+ "S09": {
+  "input": {
+   "width": "12",
+   "length": "16",
+   "height": "10",
+   "weight": "22",
+   "pallet": "euro",
+   "load_height": "61",
+   "unit": "in"
+  },
+  "site": {
+   "Package size:": "12 x 16 x 10 in",
+   "n packages:": "36",
+   "Pallet size:": "31.5 x 47.2 in",
+   "Loading height:": "60 in",
+   "Loading height with pallet:": "65.7 in",
+   "n layers:": "6",
+   "Surface usage:": "77.1%",
+   "Volume usage:": "75.9%",
+   "Total weight:": "792"
+  }
+ },
+ "S10": {
+  "input": {
+   "width": "9.25",
+   "length": "13.6",
+   "height": "7.35",
+   "weight": "5.5",
+   "pallet": "custom:30x44",
+   "load_height": "50",
+   "unit": "in"
+  },
+  "site": {
+   "Package size:": "9.3 x 13.6 x 7.4 in",
+   "n packages:": "54",
+   "Pallet size:": "30 x 44 in",
+   "Loading height:": "44.4 in",
+   "Loading height with pallet:": "50.1 in",
+   "n layers:": "6",
+   "Surface usage:": "86%",
+   "Volume usage:": "76.4%",
+   "Total weight:": "297"
+  }
+ },
+ "S11": {
+  "input": {
+   "width": "300.4",
+   "length": "399.6",
+   "height": "250",
+   "weight": "10",
+   "pallet": "euro",
+   "load_height": "1500.5",
+   "unit": "mm"
+  },
+  "site": {
+   "Package size:": "300 x 400 x 250 mm",
+   "n packages:": "48",
+   "Pallet size:": "800 x 1200mm",
+   "Loading height:": "1500 mm",
+   "Loading height with pallet:": "1645 mm",
+   "n layers:": "6",
+   "Surface usage:": "100%",
+   "Volume usage:": "99.9%",
+   "Total weight:": "480"
+  }
+ },
+ "S12": {
+  "input": {
+   "width": "700",
+   "length": "500",
+   "height": "1200",
+   "weight": "40",
+   "pallet": "euro",
+   "load_height": "1100",
+   "unit": "mm"
+  },
+  "site": {
+   "Package size:": "700 x 500 x 1200 mm",
+   "n packages:": "0",
+   "Pallet size:": "800 x 1200mm",
+   "Loading height:": "0 mm",
+   "Loading height with pallet:": "145 mm",
+   "n layers:": "0",
+   "Surface usage:": "72.9%",
+   "Volume usage:": "0%",
+   "Total weight:": "0"
+  }
+ }
+}

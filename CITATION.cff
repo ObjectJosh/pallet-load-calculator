@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite the algorithm it is built on (preferred citation).
+title: Pallet Load Calculator
+version: 1.0.0
+license: GPL-3.0-or-later
+type: software
+authors:
+  - family-names: Wong
+    given-names: Josh
+preferred-citation:
+  type: article
+  title: >-
+    An effective recursive partitioning approach for the packing of identical
+    rectangles in a rectangle
+  authors:
+    - family-names: Birgin
+      given-names: Ernesto G.
+    - family-names: Lobato
+      given-names: Rafael D.
+    - family-names: Morabito
+      given-names: Reinaldo
+  journal: Journal of the Operational Research Society
+  volume: 61
+  start: 306
+  end: 320
+  year: 2010
+  doi: 10.1057/jors.2008.141

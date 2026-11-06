@@ -1,0 +1,19 @@
+# Solver build output
+third_party/RecursivePartitioningAlgorithm/RecPartAlgorithm
+third_party/RecursivePartitioningAlgorithm/*.o
+solution.txt
+solution.mp
+solution.svg
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+
+# Local results
+results*.csv
+*.log
+.DS_Store

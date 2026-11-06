@@ -1,0 +1,9 @@
+id,width,length,height,weight,pallet,load_height,unit
+SKU-001,300,400,250,10,euro,1500,mm
+SKU-002,230,370,180,4.5,euro,1600,mm
+SKU-003,12,16,10,22,us,60,in
+SKU-004,250,250,200,6,custom:1140x1140,1400,mm
+SKU-005,192,72,200,1.2,custom:1176x672,1500,mm
+SKU-006,900,900,300,25,euro,1500,mm
+SKU-007,300,400,250,10,euro,1500,inches
+SKU-008,300,400,0,10,euro,1500,mm
